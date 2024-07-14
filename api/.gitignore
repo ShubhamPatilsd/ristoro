@@ -1,0 +1,7 @@
+.env
+__pycache__/
+chromadb/
+individual_chromadb/
+backup_chromadb/
+.venv/
+node_modules/
