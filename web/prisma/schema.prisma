@@ -12,7 +12,7 @@ generator client {
 datasource db {
   provider  = "postgresql"
 
-  url = "postgresql://postgres:postgres@localhost:5432/ristoro?schema=public"
+  url = env("DATABASE_URL")
   // uncomment next line if you use Prisma <5.10
   // directUrl = env("DATABASE_URL_UNPOOLED")
 }

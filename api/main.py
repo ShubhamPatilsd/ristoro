@@ -28,14 +28,23 @@ collection = chroma_client.get_collection(name="food_collection")
 @app.post("/get_docs")
 async def create_item(request: Request):
     query = await request.json()
-    query = query['query']
-
     print(query)
+    forbidden = list(query['forbidden'])
+    query = query['query']
+    
+
+    
+
+
+    print("query is: "+query)
+
 
     results = collection.query(
-        query_texts=[query], # Chroma will embed this for you
-        n_results=4 # how many results to return
+        query_texts=['best'+query+' in san francisco.'], # Chroma will embed this for you,not boba 
+        n_results=10 # how many results to return
     )
+
+    
 
 
 
@@ -49,7 +58,11 @@ async def create_item(request: Request):
 
     print("done")
 
-    return JSONResponse(content={"status":"success", "docs":docs})
+
+    print(docs[0])
+
+
+    return JSONResponse(content={"status":"success", "docs":[docs[0], docs[1]]})
 
 
 

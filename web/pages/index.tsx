@@ -1,11 +1,12 @@
-import Image from "next/image";
 import { Inter } from "next/font/google";
 
 import GoogleMapReact from "google-map-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useGeolocation } from "@uidotdev/usehooks";
 import "mapbox-gl/dist/mapbox-gl.css";
-import { point, buffer, bbox } from "@turf/turf";
+
+import { point, buffer, bbox, containsNumber } from "@turf/turf";
+import { jsonToPlainText } from "json-to-plain-text";
 
 import { IoSearchOutline } from "react-icons/io5";
 
@@ -121,11 +122,13 @@ export default function Home() {
                 }}
                 longitude={content.location.longitude}
                 latitude={content.location.latitude}
-                color="green"
+                color="#fff"
                 // popup={popup}
                 ref={markerRef}
-              ></Marker>
-              <Popup
+              >
+                <div className="marker" />
+              </Marker>
+              {/* <Popup
                 longitude={content.location.longitude}
                 closeOnClick={false}
                 closeOnMove={false}
@@ -138,17 +141,36 @@ export default function Home() {
                   <p>{content.address}</p>
                   <p>{content.description}</p>
                 </div>
-              </Popup>
+              </Popup> */}
 
-              <div className="shadow w-[50vw] absolute bottom-12 left-12 bg-white p-8">
-                <p className="font-medium">
-                  <span className="text-gray-600 font-medium">{`${findTimeOfDay()}, ${
-                    user?.firstName
-                  }`}</span>
-                  ,<br /> {content.letter}
+              <div className="shadow-2xl md:w-[50vw] overflow-y-scroll fixed bg-gradient-to-r from-stone-50 to-stone-100 bottom-0 md:left-12 bg-white p-8 h-[50vh] md:h-[70vh]">
+                <p className="font-medium text-xl">
+                  <span className="text-gray-600 font-medium">
+                    {`${findTimeOfDay()}${` ${user?.firstName}` || ""}`},
+                  </span>
                 </p>
 
-                <button
+                <div className="flex h-72 mt-2">
+                  <div className="w-full overflow-x-scroll max-w-[80vw] space-x-3 flex">
+                    {content.information.photos.map((photo) => {
+                      return (
+                        <div
+                          className="h-full min-w-[60vw]  md:min-w-[20vw] rounded-md bg-cover"
+                          style={{
+                            backgroundImage: `url('${photo.prefix}original${photo.suffix}')`,
+                          }}
+                        />
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div
+                  className="text-lg mt-3 letterParent"
+                  dangerouslySetInnerHTML={{ __html: content.letter }}
+                />
+
+                {/* <button
                   onClick={() => {
                     fetch("/api/mark_visited", {
                       method: "POST",
@@ -160,12 +182,11 @@ export default function Home() {
                       .then((data) => {
                         setContent("");
                         setLetter("");
-                        setQuery("");
                       });
                   }}
                 >
                   Visited!
-                </button>
+                </button> */}
               </div>
             </>
           )}
@@ -199,8 +220,6 @@ export default function Home() {
 
                   response = await response.json();
 
-                  console.log(response.info);
-
                   const restaurant = JSON.parse(response.info).restaurants[0];
 
                   const tempRes = await fetch(
@@ -220,6 +239,88 @@ export default function Home() {
                   const address = restaurantLocInfo[0].address;
                   const addressString = `${address.house_number} ${address.road}`;
 
+                  let restaurantDetails = await fetch(
+                    "/api/get_place_details",
+                    {
+                      method: "POST",
+                      body: JSON.stringify({
+                        lat: restaurantLocInfo[0].lat,
+                        lon: restaurantLocInfo[0].lon,
+                        name: restaurant.name,
+                      }),
+                    }
+                  );
+
+                  restaurantDetails = await restaurantDetails.json();
+
+                  const date = new Date();
+
+                  const daysOfWeek = [
+                    "Sunday",
+                    "Monday",
+                    "Tuesday",
+                    "Wednesday",
+                    "Thursday",
+                    "Friday",
+                    "Saturday",
+                  ];
+                  const currentDayOfWeek = daysOfWeek[date.getDay()];
+
+                  const currentTime = date.toLocaleTimeString();
+
+                  let hoursData = await fetch("/api/get_hours", {
+                    method: "POST",
+                    body: JSON.stringify({
+                      name: restaurant.name,
+                      lat: restaurantLocInfo[0].lat,
+                      lon: restaurantLocInfo[0].lon,
+                    }),
+                  });
+
+                  hoursData = await hoursData.json();
+
+                  let letterGiven = await fetch("/api/generate_letter", {
+                    method: "POST",
+                    body: JSON.stringify({
+                      prompt: `
+                      Name: don't include username in the response
+                      Restaurant Name: ${restaurant.name}
+                      Hours: ${hoursData.weekday_text.join(
+                        " "
+                      )}. Today is ${currentDayOfWeek} and it is ${currentTime}. Use this to suggest if the place is open or not.
+
+                      Open_now: ${hoursData.open_now}
+                      Some pro tips for the restaurant: ${restaurantDetails.tips.map(
+                        (tip) => tip.text
+                      )}
+
+                      Description: ${restaurant.description}
+
+                      Make your response long to be a letter.
+
+                      Restaurant: ${jsonToPlainText(restaurant, {
+                        seperator: ":",
+                        doubleQuotesForKeys: false,
+                      })}
+
+                      Use two <br/> tags for new paragraphs.
+                      `,
+                    }),
+                  });
+                  letterGiven = await letterGiven.json();
+
+                  {
+                    /*
+                    Photos URL: [${restaurantDetails.photos.map((photo) => {
+                        return `${photo.prefix}original${photo.suffix}`;
+                      })}]
+
+                       Some tastes people note this place for: ${
+                        restaurantDetails.tastes
+                      }
+                    */
+                  }
+
                   setContent({
                     ...restaurant,
                     // address: restaurantLocInfo[0].display_name,
@@ -228,10 +329,16 @@ export default function Home() {
                       latitude: restaurantLocInfo[0].lat,
                       longitude: restaurantLocInfo[0].lon,
                     },
-                    letter: JSON.parse(response.info).letter,
+                    letter: letterGiven.info,
+                    information: {
+                      ...restaurantDetails,
+                      hours: {
+                        open_now: hoursData.open_now,
+                        display: hoursData.weekday_text.join(" "),
+                        regular: hoursData.periods,
+                      },
+                    },
                   });
-
-                  console.log(JSON.parse(response.info).letter);
 
                   const contentClone = {
                     ...restaurant,
@@ -243,9 +350,10 @@ export default function Home() {
 
                   const p = point([
                     parseFloat(contentClone.location.longitude),
+
                     parseFloat(contentClone.location.latitude),
                   ]);
-                  const bufferStat = buffer(p, 0.5, { units: "kilometers" });
+                  const bufferStat = buffer(p, 2, { units: "kilometers" });
                   const [minLng, minLat, maxLng, maxLat] = bbox(bufferStat);
 
                   map.current?.fitBounds(
@@ -265,7 +373,7 @@ export default function Home() {
                 type="text"
                 name="query"
                 placeholder="Let's try something new today"
-                className="  text-invert focus:outline-none placeholder:invert placeholder:opacity-55  bg-transparent rounded-full rounded-r-none  px-6 py-2 border-2 border-sky-600 border-r-0   md:w-[35vw] md:text-2xl"
+                className=" font-semibold text-invert focus:outline-none placeholder:invert placeholder:opacity-55  bg-transparent rounded-full rounded-r-none  px-6 py-2 border-2 border-sky-600 border-r-0   md:w-[35vw] md:text-2xl"
                 onChange={(e) => {
                   setQuery(e.target.value);
                 }}
