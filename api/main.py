@@ -15,6 +15,10 @@ from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 
 
+__import__('pysqlite3')
+import sys
+sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
+
 load_dotenv()
 
 app = FastAPI()
@@ -29,7 +33,7 @@ collection = chroma_client.get_collection(name="food_collection")
 async def create_item(request: Request):
     query = await request.json()
     print(query)
-    forbidden = list(query['forbidden'])
+    # forbidden = list(query['forbidden'])
     query = query['query']
     
 
