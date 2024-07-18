@@ -54,11 +54,14 @@ export default async function handler(
 
       Give only one good recommendation that is RELEVANT to the search query.
 
-      Do not recommend these restaurants: ${restaurantsNotFound} nor ${visitedNames}
+      Do not recommend these restaurants: ${restaurantsNotFound} 
 
       just give an array called "restaurants" with all this stuff please. Also, please respond with a custom made letter for the user with the different features of the place that you chose for them. This will be the "letter" field in your response.
       
-      the user wants ${query} and ONLY ${query} in san francisco. Places: ${result.docs.text}
+      the user wants ${query} and ONLY ${query} in san francisco. Places: ${
+        //@ts-ignore
+        result.docs.text
+      }
 
       When giving a response, consider if it would have ${query} at its location. Una Pizza Napoletana is closed permanently.
       

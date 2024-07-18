@@ -219,7 +219,7 @@ export default function Home() {
                   });
 
                   response = await response.json();
-
+                  //@ts-ignore
                   const restaurant = JSON.parse(response.info).restaurants[0];
 
                   const tempRes = await fetch(
@@ -285,14 +285,19 @@ export default function Home() {
                       prompt: `
                       Name: don't include username in the response
                       Restaurant Name: ${restaurant.name}
-                      Hours: ${hoursData.weekday_text.join(
-                        " "
-                      )}. Today is ${currentDayOfWeek} and it is ${currentTime}. Use this to suggest if the place is open or not.
+                      Hours: ${
+                        //@ts-ignore
+                        hoursData.weekday_text.join(" ")
+                      }. Today is ${currentDayOfWeek} and it is ${currentTime}. Use this to suggest if the place is open or not.
 
-                      Open_now: ${hoursData.open_now}
-                      Some pro tips for the restaurant: ${restaurantDetails.tips.map(
-                        (tip) => tip.text
-                      )}
+                      Open_now: ${
+                        //@ts-ignore
+                        hoursData.open_now
+                      }
+                      Some pro tips for the restaurant: ${
+                        //@ts-ignore
+                        restaurantDetails.tips.map((tip) => tip.text)
+                      }
 
                       Description: ${restaurant.description}
 
@@ -329,12 +334,16 @@ export default function Home() {
                       latitude: restaurantLocInfo[0].lat,
                       longitude: restaurantLocInfo[0].lon,
                     },
+                    //@ts-ignore
                     letter: letterGiven.info,
                     information: {
                       ...restaurantDetails,
                       hours: {
+                        //@ts-ignore
                         open_now: hoursData.open_now,
+                        //@ts-ignore
                         display: hoursData.weekday_text.join(" "),
+                        //@ts-ignore
                         regular: hoursData.periods,
                       },
                     },

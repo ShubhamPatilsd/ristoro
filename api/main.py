@@ -34,6 +34,10 @@ chroma_client = chromadb.PersistentClient(path='./chromadb/collections')
 
 collection = chroma_client.get_collection(name="food_collection")
 
+@app.get("/")
+async def root():
+    return {"message": "Hello World"}
+
 @app.post("/get_docs")
 async def create_item(request: Request):
     query = await request.json()

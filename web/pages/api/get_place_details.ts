@@ -20,8 +20,8 @@ export default async function handler(
       limit: 1,
     };
 
-    console.log(new URLSearchParams(params).toString());
     const response = await fetch(
+      //@ts-ignore
       `${SEARCH_API_URL}?${new URLSearchParams(params).toString()}`,
       {
         method: "GET",

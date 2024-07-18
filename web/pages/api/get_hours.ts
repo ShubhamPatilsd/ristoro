@@ -19,7 +19,9 @@ export default async function handler(
   let firstRes = await fetch(textSearchUrl);
   firstRes = await firstRes.json();
 
+  //@ts-ignore
   if (firstRes.results && firstRes.results.length > 0) {
+    //@ts-ignore
     const placeId = firstRes.results[0].place_id;
     getPlaceDetails(placeId);
   } else {
