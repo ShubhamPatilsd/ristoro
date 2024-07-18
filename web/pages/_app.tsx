@@ -8,6 +8,7 @@ import {
 import "@/styles/globals.css";
 import type { AppProps } from "next/app";
 import { SignedOutPage } from "@/components/SignedOutPage";
+import { Analytics } from "@vercel/analytics/react";
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
@@ -45,6 +46,7 @@ export default function App({ Component, pageProps }: AppProps) {
       <SignedIn>
         <Component {...pageProps} />
       </SignedIn>
+      <Analytics />
     </ClerkProvider>
   );
 }
