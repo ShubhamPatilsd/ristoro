@@ -37,11 +37,7 @@ export const SignedOutPage = () => {
       <p className="mx-auto text-center garamond text-3xl text-gray-400 italic font-light">
         Explore SF through food
       </p>
-      <button
-        onClick={() => {
-          signIn();
-        }}
-      >
+      <button onClick={() => {}}>
         <p className="mx-auto text-center garamond text-3xl text-gray-400 italic font-light">
           Take me there
         </p>
