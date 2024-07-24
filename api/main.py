@@ -1,6 +1,14 @@
-__import__('pysqlite3')
-import sys
-sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
+devEnv = os.getenv("ENVIRONMENT")
+
+if(not devEnv):
+    __import__('pysqlite3')
+    import sys
+    sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
+
 
 import csv
 import chromadb
@@ -13,7 +21,7 @@ from langchain_community.vectorstores import FAISS
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain.chains import LLMChain
 
-from dotenv import load_dotenv
+
 from fastapi import FastAPI, Request
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
@@ -22,9 +30,9 @@ from fastapi.responses import JSONResponse
 
 
 
-print("sqlite changed")
 
-load_dotenv()
+
+
 
 app = FastAPI()
 
