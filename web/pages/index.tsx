@@ -17,6 +17,7 @@ import Map, {
   Popup,
 } from "react-map-gl";
 import { UserButton, useUser } from "@clerk/nextjs";
+import LoadingScreen from "../components/LoadingScreen";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -74,6 +75,65 @@ export default function Home() {
   };
 
   const [content, setContent] = useState<any>();
+  const [isLoading, setIsLoading] = useState(false);
+  const handleLoadingComplete = () => {
+    setIsLoading(false);
+  };
+  const [currentStage, setCurrentStage] = useState(0);
+
+  const loadingTips = [
+    "Avoid the fog on your way to Fisherman's Wharf.",
+    "Remember, cable cars have the right of way.",
+    "Don't leave your heart in San Francisco, you might need it later.",
+    "Watch out for seagulls at Pier 39, they're after your sourdough.",
+    "The crookedest street isn't always the fastest route.",
+  ];
+  const [loadingTip, setLoadingTip] = useState(loadingTips[0]);
+
+  const images = [
+    "https://images.pexels.com/photos/12096173/pexels-photo-12096173.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+    "https://images.pexels.com/photos/1141853/pexels-photo-1141853.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+    "https://images.pexels.com/photos/258447/pexels-photo-258447.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+    "https://images.pexels.com/photos/22817176/pexels-photo-22817176/free-photo-of-manually-operated-san-francisco-cable-car-over-fishermans-wharf.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+    "https://images.pexels.com/photos/14084016/pexels-photo-14084016.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+  ];
+
+  const [backgroundImage, setBackgroundImage] = useState(
+    "https://images.pexels.com/photos/12096173/pexels-photo-12096173.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+  );
+
+  useEffect(() => {
+    if (isLoading) {
+      const tipInterval = setInterval(() => {
+        setLoadingTip(
+          loadingTips[Math.floor(Math.random() * loadingTips.length)]
+        );
+      }, 3000);
+
+      return () => {
+        clearInterval(tipInterval);
+      };
+    }
+  }, [isLoading]);
+
+  if (isLoading) {
+    return (
+      <LoadingScreen
+        currentStage={currentStage}
+        loadingTip={loadingTip}
+        backgroundImage={backgroundImage}
+      />
+    );
+  }
+
+  const updateStage = () => {
+    setCurrentStage((prev) => {
+      const currStage = (prev + 1) % 6;
+      setBackgroundImage(images[currStage % 6]);
+      return currStage;
+    });
+  };
+
   return (
     <main>
       <div style={{ height: "100vh", width: "100%" }}>
@@ -201,6 +261,8 @@ export default function Home() {
               onSubmit={async (e) => {
                 e.preventDefault();
 
+                setIsLoading(true);
+
                 let foundThing = false;
 
                 let DNERestaurants = [];
@@ -218,6 +280,8 @@ export default function Home() {
                     }),
                   });
 
+                  updateStage();
+
                   response = await response.json();
                   //@ts-ignore
                   const restaurant = JSON.parse(response.info).restaurants[0];
@@ -227,6 +291,8 @@ export default function Home() {
                   );
 
                   const restaurantLocInfo = await tempRes.json();
+
+                  updateStage();
 
                   if (
                     restaurantLocInfo.length === 0 ||
@@ -250,6 +316,8 @@ export default function Home() {
                       }),
                     }
                   );
+
+                  updateStage();
 
                   restaurantDetails = await restaurantDetails.json();
 
@@ -276,6 +344,8 @@ export default function Home() {
                       lon: restaurantLocInfo[0].lon,
                     }),
                   });
+
+                  updateStage();
 
                   hoursData = await hoursData.json();
 
@@ -312,6 +382,8 @@ export default function Home() {
                       `,
                     }),
                   });
+
+                  updateStage();
                   letterGiven = await letterGiven.json();
 
                   {
@@ -373,6 +445,9 @@ export default function Home() {
                     { padding: 40, duration: 1000 }
                   );
 
+                  setIsLoading(false);
+                  setCurrentStage(0);
+                  setBackgroundImage(images[0]);
                   break;
                 }
               }}
