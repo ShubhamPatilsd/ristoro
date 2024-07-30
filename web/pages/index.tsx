@@ -482,8 +482,9 @@ export default function Home() {
             // >
             //   Log In
             // </button>
-            //@ts-ignore
+
             <SignInButton
+              //@ts-ignore
               className={
                 "rounded-md bg-sky-500 border-2 border-sky-400 shadow px-3 py-1 font-bold text-white text-lg hover:scale-110 transition"
               }
