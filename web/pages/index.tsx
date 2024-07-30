@@ -16,7 +16,7 @@ import Map, {
   Marker,
   Popup,
 } from "react-map-gl";
-import { UserButton, useUser } from "@clerk/nextjs";
+import { SignInButton, UserButton, useUser } from "@clerk/nextjs";
 import LoadingScreen from "../components/LoadingScreen";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -206,7 +206,7 @@ export default function Home() {
               <div className="shadow-2xl md:w-[50vw] overflow-y-scroll fixed bg-gradient-to-r from-stone-50 to-stone-100 bottom-0 md:left-12 bg-white p-8 h-[50vh] md:h-[70vh]">
                 <p className="font-medium text-xl">
                   <span className="text-gray-600 font-medium">
-                    {`${findTimeOfDay()}${` ${user?.firstName}` || ""}`},
+                    {`${findTimeOfDay()}${user ? ` ${user?.firstName}` : ""}`},
                   </span>
                 </p>
 
@@ -252,10 +252,7 @@ export default function Home() {
           )}
         </Map>
 
-        <div className="absolute top-5 left-5">
-          <UserButton />
-        </div>
-        <div className="absolute top-10 left-0 flex items-center justify-center w-screen">
+        <div className="absolute top-10 z-0 left-0 flex items-center justify-center w-full">
           <div className="p-4">
             <form
               onSubmit={async (e) => {
@@ -472,6 +469,25 @@ export default function Home() {
           </div>
           {/* <div dangerouslySetInnerHTML={{ __html: content }} /> */}
           <div />
+        </div>
+        <div className="absolute top-5 left-5 z-99">
+          {user ? (
+            <UserButton />
+          ) : (
+            // <button
+            //   onClick={() => {
+
+            //   }}
+            //   className="rounded-md bg-sky-500 border-2 border-sky-400 shadow px-3 py-1 font-bold text-white text-lg"
+            // >
+            //   Log In
+            // </button>
+            <SignInButton
+              className={
+                "rounded-md bg-sky-500 border-2 border-sky-400 shadow px-3 py-1 font-bold text-white text-lg hover:scale-110 transition"
+              }
+            />
+          )}
         </div>
       </div>
     </main>

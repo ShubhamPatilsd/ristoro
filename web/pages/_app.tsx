@@ -13,7 +13,7 @@ import { Analytics } from "@vercel/analytics/react";
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <ClerkProvider>
-      <SignedOut>
+      {/* <SignedOut>
         <div className="flex items-center  justify-center h-screen w-screen">
           <div>
             <h1
@@ -42,10 +42,10 @@ export default function App({ Component, pageProps }: AppProps) {
             </div>
           </div>
         </div>
-      </SignedOut>
-      <SignedIn>
-        <Component {...pageProps} />
-      </SignedIn>
+      </SignedOut> */}
+      {/* <SignedIn> */}
+      <Component {...pageProps} />
+      {/* </SignedIn> */}
       <Analytics />
     </ClerkProvider>
   );
