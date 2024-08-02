@@ -9,6 +9,7 @@ import "@/styles/globals.css";
 import type { AppProps } from "next/app";
 import { SignedOutPage } from "@/components/SignedOutPage";
 import { Analytics } from "@vercel/analytics/react";
+import { ToastContainer } from "react-toastify";
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
@@ -44,6 +45,19 @@ export default function App({ Component, pageProps }: AppProps) {
         </div>
       </SignedOut> */}
       {/* <SignedIn> */}
+      <ToastContainer
+        position="bottom-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
+
       <Component {...pageProps} />
       {/* </SignedIn> */}
       <Analytics />
