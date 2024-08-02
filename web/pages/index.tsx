@@ -451,6 +451,8 @@ export default function Home() {
             Find The Marina's Best Restaurants 🌁👩‍🍳
           </h1>
 
+          <p>Take this short quiz to find out what you should eat.</p>
+
           <div className="flex items-start space-x-2 mt-4 w-full">
             <div>1.</div>
             <div className="w-full">

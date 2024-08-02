@@ -60,16 +60,16 @@ export default function Home() {
   });
 
   return (
-    <main className="py-2 flex flex-col justify-center">
-      <h1 className="text-center text-3xl font-black ">Ristoro</h1>
-      <div className="max-w-2xl  w-full mx-auto md:py-12 p-4 ">
+    <main className="py-2 flex flex-col justify-center md:py-12">
+      <h1 className="text-center text-3xl font-black ">
+        Yo, I got a place & dish for you
+      </h1>
+      <div className="max-w-2xl  w-full mx-auto  p-4 ">
         {suggestion && (
           <div>
             <iframe
               src={`https://www.google.com/maps/embed/v1/place?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&q=place_id:${suggestion.restaurant.placeId}`}
-              //   style="border:0;"
               className="w-full h-[50vh] mb-3"
-              allowfullscreen=""
               loading="lazy"
             ></iframe>
 
