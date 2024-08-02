@@ -101,7 +101,7 @@ export default function Home() {
                 className="flex space-x-2 p-2  w-1/2 items-center justify-center rounded-md bg-emerald-500 hover:bg-emerald-600"
               >
                 <FaCheck />
-                <p> Yep</p>
+                <p> Take me there</p>
               </a>
             </div>
           </div>
