@@ -559,6 +559,7 @@ export default function Home() {
             <div>3.</div>
             <div className="w-full">
               <label>Pick an ingredient</label>
+              {/* sdfs */}
               <div className="space-y-1 mt-2">
                 {[
                   { text: "🍗&nbsp;&nbsp;Chicken", code: "chicken" },
