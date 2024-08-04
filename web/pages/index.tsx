@@ -27,7 +27,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="bg-[url('/sky.jpg')] h-screen w-screen flex justify-center items-center flex-col space-y-2">
+    <div className="bg-[url('/sky.jpg')] bg-cover h-screen w-screen flex justify-center items-center flex-col space-y-2">
       <Head>
         <title>Ristoro</title>
         <meta name="description" content="Text EAT to 510-579-7965" />
