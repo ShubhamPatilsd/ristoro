@@ -33,16 +33,16 @@ export default function Home() {
         <meta name="description" content="Text EAT to 510-579-7965" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <h1 className="text-3xl text-black md:text-[10vw] mb-2 font-bold text-center">
+      <h1 className="text-3xl text-black  mb-2 font-bold text-center">
         hungry?
       </h1>
-      <h1 className="text-2xl text-black md:text-[5vw] font-bold text-center">
+      <h1 className="text-2xl text-black  font-bold text-center">
         text "EAT" to{" "}
         <a href="sms://+15105797965;?&body=EAT" className="underline">
           510-579-7965
         </a>{" "}
       </h1>
-      <h1 className="text-xl text-black md:text-[3vw] font-bold text-center">
+      <h1 className="text-xl text-black  font-bold text-center">
         for a <span className="italic">really</span> good food rec
       </h1>
     </div>
