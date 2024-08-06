@@ -36,6 +36,7 @@ export default async function handler(
     inputVariables: ["question"],
   });
 
+  //@ts-ignore
   const chain = promptTemplate.pipe(model);
 
   const response = await chain.invoke({
