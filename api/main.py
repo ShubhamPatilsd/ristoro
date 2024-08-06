@@ -14,6 +14,8 @@ import csv
 import chromadb
 from langchain_openai import OpenAI
 from langchain_anthropic import ChatAnthropic
+from fastapi.middleware.cors import CORSMiddleware
+
 
 # from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain_core.prompts import PromptTemplate
@@ -35,6 +37,15 @@ from fastapi.responses import JSONResponse
 
 
 app = FastAPI()
+
+# Add CORSMiddleware to the application
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all origins
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all methods
+    allow_headers=["*"],  # Allows all headers
+)
 
 # embeddings = OpenAIEmbeddings()
 

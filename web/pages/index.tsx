@@ -265,6 +265,15 @@ export default function Home() {
                 let DNERestaurants = [];
 
                 while (true) {
+                  let result = await fetch(
+                    `${process.env.NEXT_PUBLIC_API_URL}/get_docs`,
+                    {
+                      method: "POST",
+                      body: JSON.stringify({ query: query }),
+                    }
+                  );
+                  result = await result.json();
+
                   let response = await fetch("/api/get_response", {
                     method: "POST",
                     body: JSON.stringify({
@@ -274,6 +283,7 @@ export default function Home() {
                         lon: state.longitude,
                       },
                       restaurantsNotFound: DNERestaurants,
+                      result,
                     }),
                   });
 

@@ -16,9 +16,11 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { query, location, restaurantsNotFound } = JSON.parse(req.body);
+  const { query, location, restaurantsNotFound, result } = JSON.parse(req.body);
 
   const user = getAuth(req);
+
+  console.log(`Result is here: ${result ? true : false}`);
 
   // const visited = await db.restaurant.findMany({
   //   where: {
@@ -27,12 +29,6 @@ export default async function handler(
   // });
 
   // const visitedNames = visited.map((restaurant) => restaurant.name);
-
-  let result = await fetch(`${process.env.API_URL}/get_docs`, {
-    method: "POST",
-    body: JSON.stringify({ query: query }),
-  });
-  result = await result.json();
 
   const reverseLocation = await fetch(
     `https://nominatim.openstreetmap.org/reverse?format=json&lat=${location.lat}&lon=${location.lon}`
@@ -49,14 +45,14 @@ export default async function handler(
       "
         name:"...",
         address:"...",
-        description:"..."
+        description:"...",
       "
 
       Give only one good recommendation that is RELEVANT to the search query.
 
       Do not recommend these restaurants: ${restaurantsNotFound} 
 
-      just give an array called "restaurants" with all this stuff please. Also, please respond with a custom made letter for the user with the different features of the place that you chose for them. This will be the "letter" field in your response.
+      just give an array called "restaurants" with all this stuff please. 
       
       the user wants ${query} and ONLY ${query} in san francisco. Places: ${
       //@ts-ignore
