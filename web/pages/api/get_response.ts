@@ -6,6 +6,7 @@ import { ChatOpenAI } from "@langchain/openai";
 import { PromptTemplate } from "@langchain/core/prompts";
 
 import { auth, currentUser, getAuth } from "@clerk/nextjs/server";
+import { ChatGroq } from "@langchain/groq";
 
 type Data = {
   name: string;
@@ -41,7 +42,7 @@ export default async function handler(
 
   // reverseLocation = reverseLocation.json();
 
-  const model = new ChatOpenAI({ model: "gpt-3.5-turbo-0125" });
+  const model = new ChatGroq({ model: "llama-3.1-70b-versatile" });
   const promptTemplate = new PromptTemplate({
     template: `You are a restaurant recommendation searcher. Based on the input, look at the docs found to make an accurate suggestion. Please parse for places ONLY in San Francisco. Use only what is provided in the documents, don't come up with anything on on your own. Include the address too. Blue Bottle Coffee sucks.  Respond in JSON format with the 
        dont give any chains
@@ -62,9 +63,9 @@ export default async function handler(
       result.docs.text
     }
 
-      When giving a response, consider if it would have ${query} at its location. Una Pizza Napoletana is closed permanently.
+      When giving a response, consider if it would have ${query} at its location. Una Pizza Napoletana is closed permanently. Start directyl with the JSON, no sentences before. Dont start or end with \`\`\`
       
-      \`\`\`json
+
       `,
     inputVariables: ["question"],
   });
@@ -76,6 +77,8 @@ export default async function handler(
     question: query,
     // document_data: JSON.stringify(result.docs),
   });
+
+  console.log(response.content);
 
   res.json({ status: "Success", info: response.content });
 }
