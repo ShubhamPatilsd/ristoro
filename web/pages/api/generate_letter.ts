@@ -5,6 +5,7 @@ import { ChatAnthropic } from "@langchain/anthropic";
 import { ChatOpenAI } from "@langchain/openai";
 import { ChatGroq } from "@langchain/groq";
 import { PromptTemplate } from "@langchain/core/prompts";
+import { RunnableSequence } from "@langchain/core/runnables";
 
 import { auth, currentUser, getAuth } from "@clerk/nextjs/server";
 
@@ -36,12 +37,18 @@ export default async function handler(
     inputVariables: ["question"],
   });
 
-  //@ts-ignore
-  const chain = promptTemplate.pipe(model);
+  // //@ts-ignore
+  // const chain = promptTemplate.pipe(model);
+
+  // const response = await chain.invoke({
+  //   question: prompt,
+  //   // document_data: JSON.stringify(result.docs),
+  // });
+
+  const chain = RunnableSequence.from([promptTemplate, model]);
 
   const response = await chain.invoke({
     question: prompt,
-    // document_data: JSON.stringify(result.docs),
   });
 
   res.json({ status: "Success", info: response.content });
