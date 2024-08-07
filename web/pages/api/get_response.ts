@@ -30,15 +30,9 @@ export default async function handler(
 
   // const visitedNames = visited.map((restaurant) => restaurant.name);
 
-  const reverseLocation = await fetch(
-    `https://nominatim.openstreetmap.org/reverse?format=json&lat=${location.lat}&lon=${location.lon}`
-  );
-
-  const reverseLocationJSON = await reverseLocation.json();
-
   // reverseLocation = reverseLocation.json();
 
-  const model = new ChatGroq({ model: "llama-3.1-70b-versatile" });
+  const model = new ChatGroq({ model: "llama-3.1-8b-instant" });
   const promptTemplate = new PromptTemplate({
     template: `You are a restaurant recommendation searcher. Based on the input, look at the docs found to make an accurate suggestion. Please parse for places ONLY in San Francisco. Use only what is provided in the documents, don't come up with anything on on your own. Include the address too. Blue Bottle Coffee sucks.  Respond in JSON format with the 
        dont give any chains
