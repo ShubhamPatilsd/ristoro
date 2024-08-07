@@ -75,6 +75,40 @@ export default function Home() {
   };
 
   const [content, setContent] = useState<any>();
+
+  const [animatedLetterContent, setAnimatedLetterContent] = useState("");
+
+  useEffect(() => {
+    if (content && content.letter) {
+      const wrappedContent = wrapSentencesInHTML(content.letter);
+      setAnimatedLetterContent(wrappedContent);
+    }
+  }, [content]);
+
+  const wrapSentencesInHTML = (htmlString) => {
+    const sentenceRegex = /(?<=[.!?])\s+(?=[A-Z])/;
+    let sentenceIndex = 0;
+
+    const wrappedHTML = htmlString.replace(
+      /<([^>]+)>([^<]+)<\/\1>/g,
+      (match, tag, text) => {
+        const sentences = text.split(sentenceRegex);
+        const wrappedSentences = sentences.map((sentence) => {
+          const trimmedSentence = sentence.trim();
+          if (trimmedSentence) {
+            return `<span class="fade-in-sentence" style="animation-delay: ${
+              sentenceIndex++ * 0.5
+            }s">${trimmedSentence}</span>`;
+          }
+          return sentence;
+        });
+        return `<${tag}>${wrappedSentences.join(" ")}</${tag}>`;
+      }
+    );
+
+    return wrappedHTML;
+  };
+
   const [isLoading, setIsLoading] = useState(false);
   const handleLoadingComplete = () => {
     setIsLoading(false);
@@ -203,34 +237,53 @@ export default function Home() {
                 </div>
               </Popup> */}
 
-              <div className="shadow-2xl md:w-[50vw] overflow-y-scroll fixed bg-gradient-to-r from-stone-50 to-stone-100 bottom-0 md:left-12 bg-white p-8 h-[50vh] md:h-[70vh]">
-                <p className="font-medium text-xl">
-                  <span className="text-gray-600 font-medium">
-                    {`${findTimeOfDay()}${user ? ` ${user?.firstName}` : ""}`},
-                  </span>
-                </p>
+              {content && (
+                <div className="shadow-2xl md:w-[50vw] overflow-y-scroll fixed bg-gradient-to-r from-stone-50 to-stone-100 bottom-0 md:left-12 bg-white p-8 h-[50vh] md:h-[70vh]">
+                  <p className="font-medium text-xl">
+                    <span className="text-gray-600 font-medium">
+                      {`${findTimeOfDay()}${user ? ` ${user?.firstName}` : ""}`}
+                      ,
+                    </span>
+                  </p>
 
-                <div className="flex h-72 mt-2">
-                  <div className="w-full overflow-x-scroll max-w-[80vw] space-x-3 flex">
-                    {content.information.photos.map((photo) => {
-                      return (
-                        <div
-                          className="h-full min-w-[60vw]  md:min-w-[20vw] rounded-md bg-cover"
-                          style={{
-                            backgroundImage: `url('${photo.prefix}original${photo.suffix}')`,
-                          }}
-                        />
-                      );
-                    })}
+                  <div className="flex h-72 mt-2">
+                    <div className="w-full overflow-x-scroll max-w-[80vw] space-x-3 flex">
+                      {content.information.photos.map((photo) => {
+                        return (
+                          <div
+                            className="h-full min-w-[60vw]  md:min-w-[20vw] rounded-md bg-cover"
+                            style={{
+                              backgroundImage: `url('${photo.prefix}original${photo.suffix}')`,
+                            }}
+                          />
+                        );
+                      })}
+                    </div>
                   </div>
-                </div>
 
-                <div
-                  className="text-lg mt-3 letterParent"
-                  dangerouslySetInnerHTML={{ __html: content.letter }}
-                />
+                  <div
+                    className="text-lg mt-3 letterParent"
+                    dangerouslySetInnerHTML={{ __html: content.letter }}
+                  />
 
-                {/* <button
+                  {/* <div className="text-lg mt-3 letterParent">
+                    {animatedLetterContent.map((sentence, index) => (
+                      <span
+                        key={index}
+                        className="fade-in-sentence"
+                        style={{ animationDelay: `${index * 0.5}s` }}
+                      >
+                        {sentence}{" "}
+                      </span>
+                    ))}
+                  </div> */}
+
+                  {/* <div
+                    className="text-lg mt-3 letterParent"
+                    dangerouslySetInnerHTML={{ __html: animatedLetterContent }}
+                  /> */}
+
+                  {/* <button
                   onClick={() => {
                     fetch("/api/mark_visited", {
                       method: "POST",
@@ -247,7 +300,8 @@ export default function Home() {
                 >
                   Visited!
                 </button> */}
-              </div>
+                </div>
+              )}
             </>
           )}
         </Map>
@@ -290,8 +344,9 @@ export default function Home() {
                   updateStage();
 
                   response = await response.json();
+
                   //@ts-ignore
-                  const restaurant = JSON.parse(response.info).restaurants[0];
+                  const restaurant = response.restaurants[0];
 
                   const tempRes = await fetch(
                     `https://nominatim.openstreetmap.org/search?addressdetails=1&q=${restaurant.name} san francisco&format=json`
