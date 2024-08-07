@@ -26,8 +26,8 @@ export default async function handler(
   // reverseLocation = reverseLocation.json();
 
   // gpt-3.5-turbo-0125
-  // const model = new ChatAnthropic({ model: "claude-3-5-sonnet-20240620" });
-  const model = new ChatGroq({ model: "llama-3.1-70b-versatile" });
+  const model = new ChatAnthropic({ model: "claude-3-5-sonnet-20240620" });
+  // const model = new ChatGroq({ model: "llama-3.1-70b-versatile" });
   const promptTemplate = new PromptTemplate({
     template: `You are a restaurant searching assistant. Please use the given information to write a letter to the person provided. The restaurant is already selected and details will be given. These are all within SF. When responding, don't be overly excited or preppy. just be nonchalant. no exclamation marks. Feel free to use new line characters. Use ALL provided information in your response. If the restaurant is closed, note that but please don't stop yourself from ending the conversation there.
       
@@ -37,15 +37,15 @@ export default async function handler(
     inputVariables: ["question"],
   });
 
-  // //@ts-ignore
-  // const chain = promptTemplate.pipe(model);
+  //@ts-ignore
+  const chain = promptTemplate.pipe(model);
 
   // const response = await chain.invoke({
   //   question: prompt,
   //   // document_data: JSON.stringify(result.docs),
   // });
 
-  const chain = RunnableSequence.from([promptTemplate, model]);
+  // const chain = RunnableSequence.from([promptTemplate, model]);
 
   const response = await chain.invoke({
     question: prompt,

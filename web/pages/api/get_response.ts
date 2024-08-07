@@ -43,10 +43,14 @@ export default async function handler(
     template: `You are a restaurant recommendation searcher. Based on the input, look at the docs found to make an accurate suggestion. Please parse for places ONLY in San Francisco. Use only what is provided in the documents, don't come up with anything on on your own. Include the address too. Blue Bottle Coffee sucks.  Respond in JSON format with the 
        dont give any chains
       "
-        name:"...",
+      restaurants:[
+        
+      name:"...",
         address:"...",
-        description:"...",
+        description:"..."]
       "
+
+      wrap that with curly braces btw
 
       Give only one good recommendation that is RELEVANT to the search query.
 
