@@ -411,7 +411,7 @@ export default function Home() {
 
                   hoursData = await hoursData.json();
 
-                  let letterGiven = await fetch("/api/generate_letter", {
+                  let letterGivenPre = await fetch("/api/generate_letter", {
                     method: "POST",
                     body: JSON.stringify({
                       prompt: `
@@ -444,9 +444,10 @@ export default function Home() {
                       `,
                     }),
                   });
-
+                  let letterGiven = await letterGivenPre.text();
                   updateStage();
-                  letterGiven = await letterGiven.json();
+
+                  // letterGiven = await letterGiven.json();
 
                   {
                     /*
@@ -469,7 +470,7 @@ export default function Home() {
                       longitude: restaurantLocInfo[0].lon,
                     },
                     //@ts-ignore
-                    letter: letterGiven.info,
+                    letter: letterGiven,
                     information: {
                       ...restaurantDetails,
                       hours: {
