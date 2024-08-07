@@ -73,7 +73,7 @@ export default async function handler(req: NextRequest, res: NextApiResponse) {
 
       console.log(response.content);
 
-      controller.enqueue(response.content);
+      controller.enqueue(encoder.encode(response.content.toString()));
 
       controller.close();
     },
