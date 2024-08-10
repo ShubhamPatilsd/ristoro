@@ -170,8 +170,10 @@ export default function Home() {
 
   return (
     <main className="h-screen">
-      <div className="bg-sky-50 border border-gray-300 shadow-xl flex justify-between items-center px-8">
-        <img src="/smalllogo.svg" className="h-14" />
+      <div className="bg-sky-50 border border-gray-300 shadow-xl flex flex-col md:flex-row justify-between items-center md:px-8 p-2 px-4 md:py-0">
+        <div className="md:block hidden md:visible justify-between w-full md:w-auto items-center">
+          <img src="/smalllogo.svg" className="h-14" />
+        </div>
 
         <div className="">
           <div className="p-4">
@@ -219,28 +221,47 @@ export default function Home() {
                     `https://nominatim.openstreetmap.org/search?addressdetails=1&q=${restaurant.name} san francisco&format=json`
                   );
 
-                  const restaurantLocInfo = await tempRes.json();
+                  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
-                  updateStage();
+                  const textSearchUrl = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(
+                    restaurant.name
+                  )} san francisco&key=${apiKey}`;
 
-                  if (
-                    restaurantLocInfo.length === 0 ||
-                    restaurantLocInfo[0].name !== restaurant.name
-                  ) {
+                  let firstRes = await fetch(`/api/get_location_info`, {
+                    method: "POST",
+                    body: JSON.stringify({
+                      name: restaurant.name,
+                    }),
+                  });
+                  const jsonRes = await firstRes.json();
+
+                  let restaurantLocInfo: any = {};
+
+                  for (const place of jsonRes) {
+                    if (place.business_status === "OPERATIONAL") {
+                      restaurantLocInfo = place;
+                      break;
+                    } else {
+                      continue;
+                    }
+                  }
+
+                  if (Object.keys(restaurantLocInfo).length === 0) {
                     DNERestaurants.push(`${restaurant.name}`);
                     continue;
                   }
 
-                  const address = restaurantLocInfo[0].address;
-                  const addressString = `${address.house_number} ${address.road}`;
+                  updateStage();
+
+                  const addressString = restaurantLocInfo.formatted_address;
 
                   let restaurantDetails = await fetch(
                     "/api/get_place_details",
                     {
                       method: "POST",
                       body: JSON.stringify({
-                        lat: restaurantLocInfo[0].lat,
-                        lon: restaurantLocInfo[0].lon,
+                        lat: restaurantLocInfo.geometry.location.lat,
+                        lon: restaurantLocInfo.geometry.location.lng,
                         name: restaurant.name,
                       }),
                     }
@@ -269,8 +290,8 @@ export default function Home() {
                     method: "POST",
                     body: JSON.stringify({
                       name: restaurant.name,
-                      lat: restaurantLocInfo[0].lat,
-                      lon: restaurantLocInfo[0].lon,
+                      lat: restaurantLocInfo.geometry.location.lat,
+                      lon: restaurantLocInfo.geometry.location.lng,
                     }),
                   });
 
@@ -307,6 +328,8 @@ export default function Home() {
                         doubleQuotesForKeys: false,
                       })}
 
+                      Don't include the address
+
                       Use two <br/> tags for new paragraphs.
                       `,
                     }),
@@ -333,8 +356,8 @@ export default function Home() {
                     // address: restaurantLocInfo[0].display_name,
                     address: addressString,
                     location: {
-                      latitude: restaurantLocInfo[0].lat,
-                      longitude: restaurantLocInfo[0].lon,
+                      latitude: restaurantLocInfo.geometry.location.lat,
+                      longitude: restaurantLocInfo.geometry.location.lng,
                     },
                     //@ts-ignore
                     letter: letterGiven,
@@ -354,8 +377,8 @@ export default function Home() {
                   const contentClone = {
                     ...restaurant,
                     location: {
-                      latitude: restaurantLocInfo[0].lat,
-                      longitude: restaurantLocInfo[0].lon,
+                      latitude: restaurantLocInfo.geometry.location.lat,
+                      longitude: restaurantLocInfo.geometry.location.lng,
                     },
                   };
 
@@ -365,8 +388,17 @@ export default function Home() {
                     parseFloat(contentClone.location.latitude),
                   ]);
                   const bufferStat = buffer(p, 2, { units: "kilometers" });
-                  const [minLng, minLat, maxLng, maxLat] = bbox(bufferStat);
+                  // const [minLng, minLat, maxLng, maxLat] = bbox(bufferStat);
 
+                  const minLng =
+                    restaurantLocInfo.geometry.viewport.southwest.lng;
+                  const minLat =
+                    restaurantLocInfo.geometry.viewport.southwest.lat;
+                  const maxLng =
+                    restaurantLocInfo.geometry.viewport.northeast.lng;
+                  const maxLat =
+                    restaurantLocInfo.geometry.viewport.northeast.lat;
+                  console.log([minLng, minLat], [maxLng, maxLat], map.current);
                   map.current?.fitBounds(
                     [
                       [minLng, minLat],
@@ -387,7 +419,7 @@ export default function Home() {
                 type="text"
                 name="query"
                 placeholder="I want to eat some..."
-                className=" font-semibold  focus:outline-none  placeholder:opacity-80  bg-transparent rounded-full rounded-r-none  px-6 py-2 border-0 border-sky-600 border-r-0   md:w-[35vw] md:text-2xl"
+                className=" font-semibold  focus:outline-none  placeholder:opacity-80  bg-transparent rounded-full rounded-r-none  px-6 py-2 border-0 border-sky-600 border-r-0 text-xl  md:w-[35vw] md:text-2xl"
                 onChange={(e) => {
                   setQuery(e.target.value);
                 }}
@@ -403,7 +435,7 @@ export default function Home() {
           {/* <div dangerouslySetInnerHTML={{ __html: content }} /> */}
           <div />
         </div>
-        <div className=" z-99">
+        <div className="hidden md:block md:visible z-99">
           {user ? (
             <UserButton />
           ) : (
@@ -421,11 +453,11 @@ export default function Home() {
         className="flex flex-col md:flex-row"
       >
         {content && (
-          <div className="md:w-[50vw] overflow-y-scroll bg-gradient-to-r from-stone-50 to-stone-100 bottom-0 md:left-12 bg-white p-8 h-[50vh] md:h-[100vh]">
+          <div className="md:w-[50vw] overflow-y-scroll bg-gradient-to-r from-stone-50 to-stone-100 bottom-0 md:left-12 bg-white p-8 h-[50vh] md:h-full">
             <p className="font-medium text-xl">
-              <span className="text-gray-600 font-medium">
+              {/* <span className="text-gray-600 font-medium">
                 {`${findTimeOfDay()}${user ? ` ${user?.firstName}` : ""}`},
-              </span>
+              </span> */}
             </p>
 
             <div className="flex h-72 mt-2">
@@ -443,10 +475,19 @@ export default function Home() {
               </div>
             </div>
 
-            <div
-              className="text-lg mt-3 letterParent"
-              dangerouslySetInnerHTML={{ __html: content.letter }}
-            />
+            <div className="mt-4">
+              <div className="border-b pb-3">
+                <h3 className="text-3xl font-bold">{content.name}</h3>
+                <h3 className="text-base mt-1 uppercase text-gray-500">
+                  {content.address.split(",")[0]}
+                </h3>
+              </div>
+
+              <div
+                className="text-lg mt-3 letterParent"
+                dangerouslySetInnerHTML={{ __html: content.letter }}
+              />
+            </div>
           </div>
         )}
 
@@ -463,7 +504,7 @@ export default function Home() {
             [-122.690114, 37.632134],
             [-122.19297, 37.876975],
           ]}
-          mapStyle="mapbox://styles/mapbox/streets-v9"
+          mapStyle="mapbox://styles/mapbox/streets-v12"
         >
           <GeolocateControl
             ref={geolocateControlRef}
