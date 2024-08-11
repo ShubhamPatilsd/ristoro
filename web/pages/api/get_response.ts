@@ -7,6 +7,7 @@ import { PromptTemplate } from "@langchain/core/prompts";
 
 import { auth, currentUser, getAuth } from "@clerk/nextjs/server";
 import { ChatGroq } from "@langchain/groq";
+import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { NextRequest } from "next/server";
 export const runtime = "edge";
 
@@ -31,7 +32,7 @@ export default async function handler(req: NextRequest, res: NextApiResponse) {
     async start(controller) {
       // Prevent anything else being added to the stream
 
-      const model = new ChatGroq({ model: "llama-3.1-8b-instant" });
+      const model = new ChatGoogleGenerativeAI({ model: "gemini-1.5-flash" });
       const promptTemplate = new PromptTemplate({
         template: `You are a restaurant recommendation searcher. Based on the input, look at the docs found to make an accurate suggestion. Please parse for places ONLY in San Francisco. Use only what is provided in the documents, don't come up with anything on on your own. Include the address too. Blue Bottle Coffee sucks.  Respond in JSON format with the 
            dont give any chains
@@ -49,7 +50,7 @@ export default async function handler(req: NextRequest, res: NextApiResponse) {
     
           Do not recommend these restaurants: ${restaurantsNotFound} 
     
-          just give an array called "restaurants" with all this stuff please. Give 10 restaurants please!
+          just give an array called "restaurants" with all this stuff please. Give a couple good relevant places
           
           the user wants ${query} and ONLY ${query} in san francisco. Places: ${
           //@ts-ignore

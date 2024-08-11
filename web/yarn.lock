@@ -133,6 +133,11 @@
     lodash.isundefined "^3.0.1"
     lodash.uniq "^4.5.0"
 
+"@google/generative-ai@^0.7.0":
+  version "0.7.1"
+  resolved "https://registry.yarnpkg.com/@google/generative-ai/-/generative-ai-0.7.1.tgz#eb187c75080c0706245699dbc06816c830d8c6a7"
+  integrity sha512-WTjMLLYL/xfA5BW6xAycRPiAX7FNHKAxrid/ayqC1QMam0KAK0NbMeS9Lubw80gVg5xFMLE+H7pw4wdNzTOlxw==
+
 "@googlemaps/js-api-loader@^1.13.8":
   version "1.16.6"
   resolved "https://registry.yarnpkg.com/@googlemaps/js-api-loader/-/js-api-loader-1.16.6.tgz#c89970c94b55796d51746c092f0e52953994a171"
@@ -247,6 +252,32 @@
     uuid "^10.0.0"
     zod "^3.22.4"
     zod-to-json-schema "^3.22.3"
+
+"@langchain/core@>=0.2.21 <0.3.0":
+  version "0.2.23"
+  resolved "https://registry.yarnpkg.com/@langchain/core/-/core-0.2.23.tgz#74a6feb0e476256a960db8966e9cf0471a0b9b3d"
+  integrity sha512-elPg6WpAkxWEIGC9u38F2anbzqfYYEy32lJdsd9dtChcHSFmFLlXqa+SnpO3R772gUuJmcu+Pd+fCvmRFy029w==
+  dependencies:
+    ansi-styles "^5.0.0"
+    camelcase "6"
+    decamelize "1.2.0"
+    js-tiktoken "^1.0.12"
+    langsmith "~0.1.39"
+    mustache "^4.2.0"
+    p-queue "^6.6.2"
+    p-retry "4"
+    uuid "^10.0.0"
+    zod "^3.22.4"
+    zod-to-json-schema "^3.22.3"
+
+"@langchain/google-genai@^0.0.25":
+  version "0.0.25"
+  resolved "https://registry.yarnpkg.com/@langchain/google-genai/-/google-genai-0.0.25.tgz#35d8db15a7caa130553607e09b60235bbd02b3b7"
+  integrity sha512-ODywsqTR+2gZrlqA5Hz0GFYwh4C9C/EvM+7MPP3F5r5AHKvrIJlWrlzRVzgsrqLT2UkYniftjIrQao4f23/Sgg==
+  dependencies:
+    "@google/generative-ai" "^0.7.0"
+    "@langchain/core" ">=0.2.21 <0.3.0"
+    zod-to-json-schema "^3.22.4"
 
 "@langchain/groq@^0.0.15":
   version "0.0.15"

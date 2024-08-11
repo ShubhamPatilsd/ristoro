@@ -72,7 +72,7 @@ async def create_item(request: Request):
 
 
     results = collection.query(
-        query_texts=['best'+query+' in san francisco.'], # Chroma will embed this for you,not boba 
+        query_texts=['i want to eat '+query+' in san francisco.'], # Chroma will embed this for you,not boba 
         n_results=10 # how many results to return
     )
 
