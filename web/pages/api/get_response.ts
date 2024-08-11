@@ -49,7 +49,7 @@ export default async function handler(req: NextRequest, res: NextApiResponse) {
     
           Do not recommend these restaurants: ${restaurantsNotFound} 
     
-          just give an array called "restaurants" with all this stuff please. 
+          just give an array called "restaurants" with all this stuff please. Give 10 restaurants please!
           
           the user wants ${query} and ONLY ${query} in san francisco. Places: ${
           //@ts-ignore
@@ -73,7 +73,12 @@ export default async function handler(req: NextRequest, res: NextApiResponse) {
 
       console.log(response.content);
 
-      controller.enqueue(encoder.encode(response.content.toString()));
+      const items = JSON.parse(response.content.toString()).restaurants;
+      const item = items[Math.floor(Math.random() * items.length)];
+
+      controller.enqueue(
+        encoder.encode(JSON.stringify({ restaurants: [item] }))
+      );
 
       controller.close();
     },
