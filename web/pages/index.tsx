@@ -4,6 +4,7 @@ import GoogleMapReact from "google-map-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useGeolocation } from "@uidotdev/usehooks";
 import "mapbox-gl/dist/mapbox-gl.css";
+import { FaDirections } from "react-icons/fa";
 
 import { point, buffer, bbox, containsNumber } from "@turf/turf";
 import { jsonToPlainText } from "json-to-plain-text";
@@ -353,6 +354,7 @@ export default function Home() {
 
                   setContent({
                     ...restaurant,
+                    placeId: restaurantLocInfo.place_id,
                     // address: restaurantLocInfo[0].display_name,
                     address: addressString,
                     location: {
@@ -481,6 +483,20 @@ export default function Home() {
                 <h3 className="text-base mt-1 uppercase text-gray-500">
                   {content.address.split(",")[0]}
                 </h3>
+
+                <div className="mt-2 ">
+                  <a
+                    target="_blank"
+                    className="px-3 py-1 bg-sky-100 border-2 hover:bg-sky-200 transition border-sky-300 rounded-full inline-flex items-center space-x-2"
+                    href={`https://www.google.com/maps/dir/?api=1&origin=My+Location&destination=${content.name}&destination_place_id=${content.placeId}`}
+                  >
+                    <FaDirections className="text-sky-500" size={15} />
+
+                    <span className="font-medium text-sky-700">
+                      Take Me Here
+                    </span>
+                  </a>
+                </div>
               </div>
 
               <div
