@@ -19,6 +19,7 @@ import Map, {
 } from "react-map-gl";
 import { SignInButton, UserButton, useUser } from "@clerk/nextjs";
 import LoadingScreen from "../components/LoadingScreen";
+import axios from "axios";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -190,13 +191,24 @@ export default function Home() {
 
                 while (true) {
                   let result = await fetch(
-                    `${process.env.NEXT_PUBLIC_API_URL}/get_docs`,
+                    `/api/scrape?query=best ${query} in sf`
+                  );
+                  const jsonResult = await result.json();
+                  console.log(jsonResult);
+                  const links = jsonResult.links;
+
+                  const docs = await axios(
+                    `https://cors-anywhere.herokuapp.com/https://ael6waesqg.execute-api.us-east-1.amazonaws.com/v1/batch`,
                     {
                       method: "POST",
-                      body: JSON.stringify({ query: query }),
+                      headers: {
+                        "Content-Type": "application/json",
+                      },
+                      data: {
+                        urls: links,
+                      },
                     }
                   );
-                  result = await result.json();
 
                   let response = await fetch("/api/get_response", {
                     method: "POST",
@@ -207,7 +219,7 @@ export default function Home() {
                         lon: state.longitude,
                       },
                       restaurantsNotFound: DNERestaurants,
-                      result,
+                      result: docs.data.results,
                     }),
                   });
 

@@ -31,10 +31,13 @@ export default async function handler(req: NextRequest, res: NextApiResponse) {
   const customReadable = new ReadableStream({
     async start(controller) {
       // Prevent anything else being added to the stream
+      console.log(JSON.stringify(result));
 
       const model = new ChatGoogleGenerativeAI({ model: "gemini-1.5-flash" });
-      const promptTemplate = new PromptTemplate({
-        template: `You are a restaurant recommendation searcher. Based on the input, look at the docs found to make an accurate suggestion. Please parse for places ONLY in San Francisco. Use only what is provided in the documents, don't come up with anything on on your own. Include the address too. Blue Bottle Coffee sucks.  Respond in JSON format with the 
+      const msg = await model.invoke([
+        [
+          "system",
+          `You are a restaurant recommendation searcher. Based on the input, look at the docs found to make an accurate suggestion. Please parse for places ONLY in San Francisco. Use only what is provided in the documents, don't come up with anything on on your own. Include the address too. Blue Bottle Coffee sucks.  Respond in JSON format with the 
            dont give any chains
           "
           restaurants:[
@@ -52,29 +55,16 @@ export default async function handler(req: NextRequest, res: NextApiResponse) {
     
           just give an array called "restaurants" with all this stuff please. Give a couple good relevant places
           
-          the user wants ${query} and ONLY ${query} in san francisco. Places: ${
-          //@ts-ignore
-          result.docs.text
-        }
+          the user wants ${query} and ONLY ${query} in san francisco. Places: ${JSON.stringify(
+            result
+          )}
     
-          When giving a response, consider if it would have ${query} at its location. Una Pizza Napoletana is closed permanently. Start directyl with the JSON, no sentences before. Dont start or end with \`\`\`
-          
-    
+          When giving a response, consider if it would have ${query} at its location. Start directyl with the JSON, no sentences before. Dont start or end with \`\`\`
           `,
-        inputVariables: ["question"],
-      });
+        ],
+      ]);
 
-      //@ts-ignore
-      const chain = promptTemplate.pipe(model);
-
-      const response = await chain.invoke({
-        question: query,
-        // document_data: JSON.stringify(result.docs),
-      });
-
-      console.log(response.content);
-
-      const items = JSON.parse(response.content.toString()).restaurants;
+      const items = JSON.parse(msg.content.toString()).restaurants;
       const item = items[Math.floor(Math.random() * items.length)];
 
       controller.enqueue(
