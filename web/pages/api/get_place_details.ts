@@ -16,7 +16,7 @@ export default async function handler(
   const searchByCoords = async (name: string, lat: string, lon: string) => {
     const params = {
       ll: `${lat},${lon}`,
-      query: name,
+      query: `${name} san francisco`,
       limit: 1,
     };
 
@@ -53,7 +53,7 @@ export default async function handler(
   };
 
   const results = await searchByCoords(name, lat, lon);
-  console.log(results);
+
   if (results.results) {
     const venueId = results.results[0].fsq_id;
     const details = await getRestaurantDetails(venueId);
