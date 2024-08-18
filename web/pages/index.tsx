@@ -198,7 +198,7 @@ export default function Home() {
                   const links = jsonResult.links;
 
                   const docs = await axios(
-                    `https://cors-anywhere.herokuapp.com/https://ael6waesqg.execute-api.us-east-1.amazonaws.com/v1/batch`,
+                    `https://cors-proxy.fringe.zone/https://ael6waesqg.execute-api.us-east-1.amazonaws.com/v1/batch`,
                     {
                       method: "POST",
                       headers: {
