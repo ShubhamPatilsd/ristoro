@@ -9,11 +9,58 @@ import "@/styles/globals.css";
 import type { AppProps } from "next/app";
 import { SignedOutPage } from "@/components/SignedOutPage";
 import { Analytics } from "@vercel/analytics/react";
+import { Head } from "next/document";
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <ClerkProvider>
-      {/* <SignedOut>
+    <>
+      <Head>
+        <title>Ristoro</title>
+        <meta
+          name="description"
+          content="finding you really good food recs in sf 🌉🧑‍🍳"
+        />
+        <meta
+          name="keywords"
+          content="ristoro,food,pizza sf,food sf,eater sf,food recommendations sf,sf,san francisco food,sf food,best sf food,best coffee sf,best pizza sf,best restaurants sf,best restaurants san francisco,best coffee san francisco,best pizza san francisco,restaurant recommendation,restaurant finder,food recommendation app,restaurant recommendation app reddit,best food,restaurants,reddit,best places to eat sf,best places to eat san francisco,best places to eat"
+        />
+        <meta name="robots" content="index, follow" />
+        <meta name="googlebot" content="index, follow" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta charSet="utf-8" />
+        <meta property="og:site_name" content="Ristoro" />
+        <meta property="og:locale" content="en_US" />
+        <meta property="og:title" content="Ristoro" />
+        <meta
+          property="og:description"
+          content="finding you really good food recs in sf 🌉🧑‍🍳"
+        />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://getristoro.com" />
+        <meta
+          property="og:image"
+          content="https://cloud-6hdrv51ni-hack-club-bot.vercel.app/0banner.png"
+        />
+        <meta property="og:image:alt" content="Ristoro Banner" />
+        <meta property="og:image:type" content="image/png" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:site" content="@getristoro" />
+        <meta name="twitter:creator" content="@getristoro" />
+        <meta name="twitter:title" content="Ristoro" />
+        <meta
+          name="twitter:description"
+          content="finding you really good food recs in sf 🌉🧑‍🍳"
+        />
+        <meta
+          name="twitter:image"
+          content="https://cloud-6hdrv51ni-hack-club-bot.vercel.app/0banner.png"
+        />
+      </Head>
+      <ClerkProvider>
+        {/* <SignedOut>
         <div className="flex items-center  justify-center h-screen w-screen">
           <div>
             <h1
@@ -43,10 +90,11 @@ export default function App({ Component, pageProps }: AppProps) {
           </div>
         </div>
       </SignedOut> */}
-      {/* <SignedIn> */}
-      <Component {...pageProps} />
-      {/* </SignedIn> */}
-      <Analytics />
-    </ClerkProvider>
+        {/* <SignedIn> */}
+        <Component {...pageProps} />
+        {/* </SignedIn> */}
+        <Analytics />
+      </ClerkProvider>
+    </>
   );
 }
